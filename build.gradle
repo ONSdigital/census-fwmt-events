@@ -1,0 +1,62 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.0.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+}
+
+description = 'fwmt-census-events'
+
+group = 'uk.gov.ons.fwmt'
+
+version = '1.0.0-SNAPSHOT'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    if (!project.hasProperty('omitSDCArtifactory')) {
+        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local' }
+        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local' }
+    }
+}
+
+dependencies {
+    compile("uk.gov.ons.fwmt:fwmt-census-common:1.0.1-SNAPSHOT")
+
+    compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+    compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
+
+
+    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8")
+
+
+    compile("org.projectlombok:lombok:1.18.4")
+    annotationProcessor("org.projectlombok:lombok:1.18.4")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'fwmt-census-events'
+            version = version
+
+            from components.java
+        }
+    }
+}
+
+
