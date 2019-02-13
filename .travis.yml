@@ -2,30 +2,29 @@ language: java
 jdk: oraclejdk11
 install: true
 script:
-  - |
-    if [[ $TRAVIS_COMMIT_MESSAGE != 'JENKINS SNAPSHOT UPDATE' ]]; then
-      ./gradlew build --info;
-    fi
-env:
-  global:
-    - SPRING_PROFILES_ACTIVE=default,integration-tests
-    - secure: ZA6zhOM2fFecroKyELVr/yKXquUwWAJyjwUBUFNETuEIZW9vVIukGTNg/N6Zy33F97TfOVn774EI3XwvjWQFKoXxUFLFlNeYeqm6gHDzCa+Ji/JNj22m22wYuARunX1xuFPHdpCbrhy3r6/Avk6zR/UFy5EeS3+KkX3IIauR8ssOsCefTjtkbRLJ63UreVSztEbPTgZPrHdR9f62o7ZTRor/77EYIIq546d96TlDuxL1As2yTTAjad0zezZYrEhLRCMcjEDY3uECYwnugZ2GFbUsphMHCm4OTxdOsjSaIRAailJUheUPx611Gt268OghWSF8su65CBrx1yuzDcjxiufboWXol4lT4IJ/MhQcDlGTK8YSq8s/Mwgdh6YBeAJuDuCk1F1aIG/ceQIsXQUxItjCw7HIh//rEMzv2g6eyDeNgobM42d5DdD96/E9jyvSSglY4Abk1kNemt40+/fy1T+czJO69HzDRc8FXiz6oBDicXf+KX9UHATBPdKymyCNhmw5CQUZZ2aTG7x/Thaud7tgg32NSvCcfB3UstjMpg45bFwls3AJqAQoVx/GG6mUrbrR62Es8DFVIIRdAvZzPai3xTNIGvPCFehW9j8hBeyk2WHUfyTa+eMT5EgFSTCelscehd0ehiqzXPzNmLdyfstPOrhpOoZTXoP1q5EDOto=
-    - secure: oA2QJcCxt86PmUXhBTUq3FD7698Wl8vyxit4C7aqdDGpHMT9YgIICcnsB4GgXdmqYfppaYr07AUaBnZlShIa9Q4+PUJTsvzvu7LQh3kXDonLOPX348sO8knbIB5HPze2nz5plmZF3DTaFAiucTBtQaodxanXAdJzVl2KwCSGUMTtxKSddRzWrYc8R4BWCUxZtGnfeKbPhuB1Qx6exGuGupX4QKqzv1eOigHgZQm6J0mqVW2bl9iCNt4bTPhKJs7hprfrBM/6Aqy8XYikhWBVsIlXO7NU9m+nDZzA/SBnQncuB45ABoA8bJgfh+o03g9W7FkDkyI+ucH+2f7e/LUCUC82dk5jul3q3usy1/Mk3qwMBmg8sdIBNit5LjPefT5O3njMg6AST5my5TbUG7heMdKY59BgXZYSeiHEixJ1wnA5a4PHlVGldN317w0v1AOoXWY2Q5J6iUPP2/l+dBu58fhzJU49CH/jDmRxvdiLvUDXE/jVLIbiJbHklT/8zeZKUoGjgQqzlAsKY6r9qciqfLAcgfVPu1wxtq2gd7Xx3zJNL/yGfDMJrdFwGAszWSr1ilY2tO1vjyGKn86Q3NmMzvnsIB+WgCbzP3mQ/q35uwCuW2GpLnf09BzYl69xCWzGcGt/f3UB7YyF7iMKMjo5OPUIPkz9uD8jJQ/X92HXmU8=
-    - secure: PnBM66E5/MQzvqp2/8N8hwFcH+kXVqBd+cn24bKSmct6zb8bxOqYUHtJtcFbjWGQANHT7jR3dxYxlmF+oaBTZuYcmemWlvA+t84Zq7t3PjzHqKToufYzjwQulD4cBMQI/BHxGIbBsI9CvjR92kNz/FkvmMescXsP9eW9N+zPardiBvBiydvd4bzsqa6GUtjMExjrHi0Kz9fttq6gYDkhL5Vr9rogj+RcB+8tnouIfbrMkbweRv8WAMaeyBt+5qWi9N2ay+++5JuVZJuwjHbaPQP02hUleSXJ2C8csFsFRwbg9x9T3zLUm1TRZcFmalo6QJXEgz7hTXIO3F4ROwvpxV9aoE05JQmYAB2Ll0XwftZL3+lnb08W89awiiIuTWAQlSOVSkHdxra5MRTZb/7kmNG1TbOHhSWpG9sC1doQ6+CGspONjiZNHlWgI/YsSEwHrtm+CkS1zHFV3poXgVrxvWIVX7ROqCsllzgofrFn9U2jXgmmiY9zFsODplua8iWhKJz46rqbXdYN7ZPSFoixAh5Mb/2xTgvLj9SVjRVUE3u4Z8OvnvJPyvQucyA76jWKzfUdloL4JbMF7aS1N+xVbzhFqAfB+OLrOgrn3TFCTRwqe1PZnD3nGmfwsB+zANMkAtUHw1ORtgRPr1U24uf4WdFU4IPCEcXqzrvROVGwXD8=
+- |
+  if [[ $TRAVIS_COMMIT_MESSAGE != 'JENKINS SNAPSHOT UPDATE' ]]; then
+    ./gradlew build --info;
+  fi
 branches:
   only:
-    - master
+  - master
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - "$HOME/.gradle/caches/"
-    - "$HOME/.gradle/wrapper/"
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-  - |-
-    set -e
-    if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ $TRAVIS_COMMIT_MESSAGE != "JENKINS SNAPSHOT UPDATE" ]]; then
-      ./gradlew artifactPublish
-    fi
+- bash <(curl -s https://codecov.io/bash)
+- |-
+  set -e
+  if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ $TRAVIS_COMMIT_MESSAGE != "JENKINS SNAPSHOT UPDATE" ]]; then
+    ./gradlew artifactPublish
+  fi
+env:
+  global:
+  - secure: Y4Jj52wOl0Ld0U70pc0IGATltVIpHoPiz+O96BhfM1npLc++mLqwR/cQjnmFsnLQFONdbfYJmTPPmRazu2pcm4/v9uHfz019rNSbvhLDCKwjFzVofTwTwsnowSECuXeaJyB6sWa+ZTwcQ9YXN+MAL0/2vz7BaKYZ3v/FoqoH4brDTMCJyIj0i7LJ9u0fzkmVj4E3wWctqWoI0gtE46q8KpXv44Paaiw3Ln8v/0y5X163PXMvrnW1l4bmg8P/G2gu4PrPjmG9uVFr1NQxIfyfnCybavUPnsd1mAunpDwIp8pQ0W+IZPuXf90WoLRUyZbnX4czNmbPM8t+icia4MXvFJbYh8PSK677qgZ4t7RQaenIcLv0KIWbl6dxPs0KKFtbj2t9GdOJAiZ3M2o1tUj7NEW2uPwogWWVhNcNU6LTUGakAe63P9E3Q/2mZQvLDo+pMyNLmHp86EawreSTGth5E5KecUIicCXvYV1r4Tx54fROQqkn1ag24g0C7E50UVA2zlsVcOBiuF8CQye3YwgrgSOW3Z2jvttjZLCssZ5QPinl8+GYrZ9FVITK4/jcvvqmE6jbChwaeNm0cyJEnVIar30okIr2jyVI9J/KBCu4TuD1iGiNJW7yMlVqXfc3EbsmyheH9/L0CxbzCWZBWistUvpxtO7roBcnKMS8KRKoOwQ=
+  - secure: Juobb0FxZ28nQqfknE7qps8hhXZA+9vz07koB9JJbS8X6EkihrJS84z9/j1e9Lz6AA2eosEkLzWnpmvFN0h/VyxWc1lAL3Bh/M0pDHxUfsBEpSj4/nxUYoBB+uMEwugJ4I/eVHIUAhrNkYKTyDZFl2wGyYjzAu+jqFyqAQ11R1z49dvGc4uUOzJuiqQuTOYGq68JHBD5ax1pwkXMo1+H6voQw4XfpYlnmVURgywivb6CQZbILorovUnbbCGRmdYTNvV8UsfVomiutEpqqb8JiUW16HLvCWbO0wYSgvLsTWvptqvi+f9/6qgkojtMmNvXqpXz9vgLjfgBzoNXX5v4pt4CbR9Sb6OSQhTQFix1hYBG0xyDeKm2WIcgJ9xebKoNLE+y2gingBUG3bLLzK1N9vv3eP5vYIynt6hsM/MSjvjbkAEX2jCfCDhpc1Fxi3CStQmXOW3kQpL950YJXQIkwRlaW+rFGdeYrrH0dgHeOmVXPJoepo7iv2PesdSOtiAg1NTZLLNQD/yvomw0SuKlhqa6Jgbzlxm/Iz+addMkV28YV+IURkoAx4czhiDuqv8HCJ3va/OqDaQ4S9QToy9T4GELRFF2SYh088SzRby0IC3hDpwNTvB7Z+FgZ53zAjqIvteWOfrkX3znqgnxN4mlczUBViOHU3SDBZ32reGz+SQ=
+  - secure: BW44YNUQy0vs26YfET7k4pR3MRm0czT4TcXbqq7c3CZAWFX+2bMATQLExQS9TYOMm5a3Kqx1byC9XrI7aHzg5jZAGgGu58D48DTWwPryg4usx3KGJnLjIqiVhAINpBKVdLWeewAxjtzyjREcKVUUVzjB6v7MvBnqDgpfBpcCKqemed+rlz0MZlb31rZyhPteDDx1hsptItNQXv4FB2/G1Onjzgq9yDOy6VkypGB9c+X5REMtyMtae7SBVfewv2Pe8V1+8od/JtVoc31VpSETgRIxoRE5PssTx/l14G/u+3RFj0lygfjMMAaqvQJPQVE7lAdY0fN4+3kY7AMoRmKqqLif0QvDjJRdg8I+2Ddou8iTWjv2g1BrgHXqu132X/WEo17nOSSG+MkqZAdewJrNGq6d93jaKUN647vvD5uVkyGIqAfKwVnVsJMlKwmo6mP5usYO0QN+Qh+O5gQms4xy1gZDOiWl9eV/ewONdxzw13FsAbhOV7bWgrtO5nYjXiLxkYZ0WRjY2erzt1OzX4BesJUVPI7YV+iNRUrtc13ftqtGGFLNlxsBzJ+rqd6+W4ZlB8lmd6bO+kziwQfnsdP90cHU/HQemKhiBIRaj9+j/+RyAuMEgnYB7mDYcnpg5+SASGzwo/EIpu+G6Y07VdxTgXxFr1BShw2fQQlFx45VKAM=
