@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class GatewayEventQueueConfig {
 
   public static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
-  private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
+  public static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
 
   @Bean
   public FanoutExchange eventExchange() {
