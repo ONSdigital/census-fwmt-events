@@ -73,8 +73,7 @@ publishing {
     }
 }
 
+
 artifactoryPublish {
     publications 'maven'
 }
-
-
