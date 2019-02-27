@@ -1,4 +1,4 @@
-package uk.gov.ons.fwmt.census.events.data;
+package uk.gov.ons.census.fwmt.events.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

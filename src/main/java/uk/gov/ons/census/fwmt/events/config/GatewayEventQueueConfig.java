@@ -1,4 +1,4 @@
-package uk.gov.ons.fwmt.census.events.config;
+package uk.gov.ons.census.fwmt.events.config;
 
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.context.annotation.Bean;
