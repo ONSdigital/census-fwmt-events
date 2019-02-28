@@ -19,7 +19,7 @@ plugins {
 
 description = 'census-fwmt-events'
 
-group = 'uk.gov.ons.fwmt'
+group = 'uk.gov.ons.census.fwmt'
 
 version = '1.0.0-SNAPSHOT'
 
