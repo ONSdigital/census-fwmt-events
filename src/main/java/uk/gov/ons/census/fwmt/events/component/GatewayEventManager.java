@@ -1,8 +1,8 @@
-package uk.gov.ons.fwmt.census.events.component;
+package uk.gov.ons.census.fwmt.events.component;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.ons.fwmt.census.common.error.GatewayException;
+import uk.gov.ons.census.fwmt.common.error.GatewayException;
 
 import java.util.ArrayList;
 import java.util.List;

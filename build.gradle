@@ -17,9 +17,9 @@ plugins {
 }
 
 
-description = 'fwmt-census-events'
+description = 'census-fwmt-events'
 
-group = 'uk.gov.ons.fwmt'
+group = 'uk.gov.ons.census.fwmt'
 
 version = '1.0.0-SNAPSHOT'
 
@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile("uk.gov.ons.fwmt:fwmt-census-common:1.0.1-SNAPSHOT")
+    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.2-SNAPSHOT")
 
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
@@ -65,7 +65,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = group
-            artifactId = 'fwmt-census-events'
+            artifactId = 'census-fwmt-events'
             version = version
 
             from components.java
