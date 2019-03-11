@@ -13,11 +13,13 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
+    id 'com.jfrog.artifactory' version '4.8.1'
 }
 
-description = 'fwmt-census-events'
 
-group = 'uk.gov.ons.fwmt'
+description = 'census-fwmt-events'
+
+group = 'uk.gov.ons.census.fwmt'
 
 version = '1.0.0-SNAPSHOT'
 
@@ -34,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile("uk.gov.ons.fwmt:fwmt-census-common:1.0.1-SNAPSHOT")
+    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.2-SNAPSHOT")
 
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
@@ -47,11 +49,23 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.4")
 }
 
+artifactory {
+    contextUrl = System.getenv('ARTIFACTORY_URL')
+    publish {
+        repository {
+            repoKey = 'libs-snapshot-local'
+            username = System.getenv('ARTIFACTORY_USERNAME')
+            password = System.getenv('ARTIFACTORY_PASSWORD')
+        }
+    }
+}
+
+
 publishing {
     publications {
         maven(MavenPublication) {
             groupId = group
-            artifactId = 'fwmt-census-events'
+            artifactId = 'census-fwmt-events'
             version = version
 
             from components.java
@@ -60,3 +74,6 @@ publishing {
 }
 
 
+artifactoryPublish {
+    publications 'maven'
+}

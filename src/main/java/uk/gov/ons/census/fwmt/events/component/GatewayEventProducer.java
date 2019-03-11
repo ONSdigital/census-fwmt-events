@@ -1,4 +1,4 @@
-package uk.gov.ons.fwmt.census.events.component;
+package uk.gov.ons.census.fwmt.events.component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.fwmt.census.common.error.GatewayException;
-import uk.gov.ons.fwmt.census.events.config.GatewayEventQueueConfig;
-import uk.gov.ons.fwmt.census.events.data.GatewayEventDTO;
+import uk.gov.ons.census.fwmt.common.error.GatewayException;
+import uk.gov.ons.census.fwmt.events.config.GatewayEventQueueConfig;
+import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
 @Slf4j
 @Component
