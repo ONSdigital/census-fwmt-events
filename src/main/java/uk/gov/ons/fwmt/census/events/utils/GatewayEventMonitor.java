@@ -45,9 +45,13 @@ public class GatewayEventMonitor {
   }
 
   public void enableEventMonitor() throws IOException, TimeoutException {
+    enableEventMonitor("localhost");
+  }
+
+  public void enableEventMonitor(String rabbitLocation) throws IOException, TimeoutException {
     gatewayEventMap = new HashMap<>();
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("localhost");
+    factory.setHost(rabbitLocation);
     connection = factory.newConnection();
     channel = connection.createChannel();
 
