@@ -53,7 +53,7 @@ artifactory {
     contextUrl = System.getenv('ARTIFACTORY_URL')
     publish {
         repository {
-            repoKey = 'libs-snapshot-local'
+            repoKey = 'libs-release-local'
             username = System.getenv('ARTIFACTORY_USERNAME')
             password = System.getenv('ARTIFACTORY_PASSWORD')
         }

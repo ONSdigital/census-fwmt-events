@@ -3,7 +3,7 @@ jdk: oraclejdk11
 install: true
 script:
 - |
-  if [[ $TRAVIS_COMMIT_MESSAGE != 'JENKINS SNAPSHOT UPDATE' ]]; then
+  if [[ $TRAVIS_COMMIT_MESSAGE != 'CONCOURSE SNAPSHOT UPDATE' ]]; then
     ./gradlew build --info;
   fi
 branches:
@@ -20,11 +20,7 @@ after_success:
 - bash <(curl -s https://codecov.io/bash)
 - |-
   set -e
-  if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ $TRAVIS_COMMIT_MESSAGE != "JENKINS SNAPSHOT UPDATE" ]]; then
+  if [[ "$TRAVIS_BRANCH" = "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ $TRAVIS_COMMIT_MESSAGE != "CONCOURSE SNAPSHOT UPDATE" ]]; then
+    sed -ie 's/SNAPSHOT/RELEASE/' build.gradle
     ./gradlew artifactPublish
   fi
-env:
-  global:
-  - secure: Y4Jj52wOl0Ld0U70pc0IGATltVIpHoPiz+O96BhfM1npLc++mLqwR/cQjnmFsnLQFONdbfYJmTPPmRazu2pcm4/v9uHfz019rNSbvhLDCKwjFzVofTwTwsnowSECuXeaJyB6sWa+ZTwcQ9YXN+MAL0/2vz7BaKYZ3v/FoqoH4brDTMCJyIj0i7LJ9u0fzkmVj4E3wWctqWoI0gtE46q8KpXv44Paaiw3Ln8v/0y5X163PXMvrnW1l4bmg8P/G2gu4PrPjmG9uVFr1NQxIfyfnCybavUPnsd1mAunpDwIp8pQ0W+IZPuXf90WoLRUyZbnX4czNmbPM8t+icia4MXvFJbYh8PSK677qgZ4t7RQaenIcLv0KIWbl6dxPs0KKFtbj2t9GdOJAiZ3M2o1tUj7NEW2uPwogWWVhNcNU6LTUGakAe63P9E3Q/2mZQvLDo+pMyNLmHp86EawreSTGth5E5KecUIicCXvYV1r4Tx54fROQqkn1ag24g0C7E50UVA2zlsVcOBiuF8CQye3YwgrgSOW3Z2jvttjZLCssZ5QPinl8+GYrZ9FVITK4/jcvvqmE6jbChwaeNm0cyJEnVIar30okIr2jyVI9J/KBCu4TuD1iGiNJW7yMlVqXfc3EbsmyheH9/L0CxbzCWZBWistUvpxtO7roBcnKMS8KRKoOwQ=
-  - secure: Juobb0FxZ28nQqfknE7qps8hhXZA+9vz07koB9JJbS8X6EkihrJS84z9/j1e9Lz6AA2eosEkLzWnpmvFN0h/VyxWc1lAL3Bh/M0pDHxUfsBEpSj4/nxUYoBB+uMEwugJ4I/eVHIUAhrNkYKTyDZFl2wGyYjzAu+jqFyqAQ11R1z49dvGc4uUOzJuiqQuTOYGq68JHBD5ax1pwkXMo1+H6voQw4XfpYlnmVURgywivb6CQZbILorovUnbbCGRmdYTNvV8UsfVomiutEpqqb8JiUW16HLvCWbO0wYSgvLsTWvptqvi+f9/6qgkojtMmNvXqpXz9vgLjfgBzoNXX5v4pt4CbR9Sb6OSQhTQFix1hYBG0xyDeKm2WIcgJ9xebKoNLE+y2gingBUG3bLLzK1N9vv3eP5vYIynt6hsM/MSjvjbkAEX2jCfCDhpc1Fxi3CStQmXOW3kQpL950YJXQIkwRlaW+rFGdeYrrH0dgHeOmVXPJoepo7iv2PesdSOtiAg1NTZLLNQD/yvomw0SuKlhqa6Jgbzlxm/Iz+addMkV28YV+IURkoAx4czhiDuqv8HCJ3va/OqDaQ4S9QToy9T4GELRFF2SYh088SzRby0IC3hDpwNTvB7Z+FgZ53zAjqIvteWOfrkX3znqgnxN4mlczUBViOHU3SDBZ32reGz+SQ=
-  - secure: BW44YNUQy0vs26YfET7k4pR3MRm0czT4TcXbqq7c3CZAWFX+2bMATQLExQS9TYOMm5a3Kqx1byC9XrI7aHzg5jZAGgGu58D48DTWwPryg4usx3KGJnLjIqiVhAINpBKVdLWeewAxjtzyjREcKVUUVzjB6v7MvBnqDgpfBpcCKqemed+rlz0MZlb31rZyhPteDDx1hsptItNQXv4FB2/G1Onjzgq9yDOy6VkypGB9c+X5REMtyMtae7SBVfewv2Pe8V1+8od/JtVoc31VpSETgRIxoRE5PssTx/l14G/u+3RFj0lygfjMMAaqvQJPQVE7lAdY0fN4+3kY7AMoRmKqqLif0QvDjJRdg8I+2Ddou8iTWjv2g1BrgHXqu132X/WEo17nOSSG+MkqZAdewJrNGq6d93jaKUN647vvD5uVkyGIqAfKwVnVsJMlKwmo6mP5usYO0QN+Qh+O5gQms4xy1gZDOiWl9eV/ewONdxzw13FsAbhOV7bWgrtO5nYjXiLxkYZ0WRjY2erzt1OzX4BesJUVPI7YV+iNRUrtc13ftqtGGFLNlxsBzJ+rqd6+W4ZlB8lmd6bO+kziwQfnsdP90cHU/HQemKhiBIRaj9+j/+RyAuMEgnYB7mDYcnpg5+SASGzwo/EIpu+G6Y07VdxTgXxFr1BShw2fQQlFx45VKAM=
