@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.0.RELEASE'
+        springBootVersion = '2.1.0.SNAPSHOT'
     }
     repositories {
         mavenCentral()
@@ -21,7 +21,7 @@ description = 'census-fwmt-events'
 
 group = 'uk.gov.ons.census.fwmt'
 
-version = '1.0.3-SNAPSHOT'
+version = '1.0.4-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
