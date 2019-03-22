@@ -13,6 +13,8 @@ import uk.gov.ons.census.fwmt.common.error.GatewayException;
 import uk.gov.ons.census.fwmt.events.config.GatewayEventQueueConfig;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
+import java.time.LocalTime;
+
 @Slf4j
 @Component
 class GatewayEventProducer {
@@ -28,10 +30,10 @@ class GatewayEventProducer {
   private ObjectMapper objectMapper;
 
   @Retryable
-  public void sendEvent(String caseId, String eventType) throws GatewayException {
+  public void sendEvent(String caseId, String eventType, String eventTime) throws GatewayException {
 
     GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
-        .caseId(caseId).eventType(eventType)
+        .caseId(caseId).eventType(eventType).localTime(eventTime)
         .build();
     String msg = convertToJSON(gatewayEventDTO);
     rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayEventQueueConfig.GATEWAY_EVENTS_ROUTING_KEY, msg);

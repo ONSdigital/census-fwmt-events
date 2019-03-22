@@ -21,9 +21,9 @@ public class GatewayEventManager {
     }
   }
 
-  public void triggerEvent(String caseId, String eventType) throws GatewayException {
+  public void triggerEvent(String caseId, String eventType, String eventTime) throws GatewayException {
     if (eventTypes.contains(eventType)) {
-      gatewayEventProducer.sendEvent(caseId, eventType);
+      gatewayEventProducer.sendEvent(caseId, eventType, eventTime);
     } else {
       log.error("Invalid event type: {}", eventType);
     }
