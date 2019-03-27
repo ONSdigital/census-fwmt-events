@@ -21,7 +21,7 @@ description = 'census-fwmt-events'
 
 group = 'uk.gov.ons.census.fwmt'
 
-version = '1.0.2-SNAPSHOT'
+version = '1.0.5-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.2-SNAPSHOT")
+    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.2-RELEASE")
 
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
