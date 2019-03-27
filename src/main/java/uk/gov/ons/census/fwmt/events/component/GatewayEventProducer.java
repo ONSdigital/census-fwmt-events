@@ -30,7 +30,7 @@ class GatewayEventProducer {
   private ObjectMapper objectMapper;
 
   @Retryable
-  public void sendEvent(String caseId, String eventType, String eventTime) throws GatewayException {
+  public void sendEvent(String caseId, String eventType, LocalTime eventTime) throws GatewayException {
 
     GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
         .caseId(caseId).eventType(eventType).localTime(eventTime)

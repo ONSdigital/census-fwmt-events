@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.ons.census.fwmt.common.error.GatewayException;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class GatewayEventManager {
     }
   }
 
-  public void triggerEvent(String caseId, String eventType, String eventTime) throws GatewayException {
+  public void triggerEvent(String caseId, String eventType, LocalTime eventTime) throws GatewayException {
     if (eventTypes.contains(eventType)) {
       gatewayEventProducer.sendEvent(caseId, eventType, eventTime);
     } else {
