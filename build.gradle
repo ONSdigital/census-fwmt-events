@@ -40,9 +40,12 @@ dependencies {
 
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
+    compile("org.springframework:spring-web:5.1.5.RELEASE")
 
 
     compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
+
 
 
     compile("org.projectlombok:lombok:1.18.4")
