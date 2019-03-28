@@ -1,6 +1,9 @@
 package uk.gov.ons.census.fwmt.events.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -9,11 +12,14 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +31,7 @@ public class GatewayEventMonitor {
 
   private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
   private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
-  private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static Map<String, GatewayEventDTO> gatewayEventMap = null;
   private Channel channel = null;
   private Connection connection = null;
@@ -63,6 +69,16 @@ public class GatewayEventMonitor {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
           throws IOException {
+
+        JavaTimeModule module = new JavaTimeModule();
+        LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(
+            DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSS"));
+        module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
+        OBJECT_MAPPER = Jackson2ObjectMapperBuilder.json()
+            .modules(module)
+            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
+
         String message = new String(body, StandardCharsets.UTF_8);
         GatewayEventDTO dto = OBJECT_MAPPER.readValue(message.getBytes(), GatewayEventDTO.class);
         gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dto);
