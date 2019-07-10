@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
@@ -93,6 +91,76 @@ public class GatewayEventMonitor {
 
     return isFound;
   }
+
+  public List<GatewayEventDTO> getEventsForEventType(String eventType, int qty) {
+    List<GatewayEventDTO> eventsFound = new ArrayList<>();
+    Set<String> keys = gatewayEventMap.keySet();
+
+    for (String key: keys) {
+      if (key.endsWith(eventType)){
+        eventsFound.add(gatewayEventMap.get(key));
+      }
+    }
+
+    return eventsFound;
+  }
+
+
+  public Collection<GatewayEventDTO> grabEventsTriggered(String eventType, int qty, Long timeOut) {
+    Long startTime = System.currentTimeMillis();
+    boolean keepChecking = true;
+    boolean isAllFound = false;
+
+    List<GatewayEventDTO> eventsFound = null;
+
+    while (keepChecking) {
+      eventsFound = getEventsForEventType(eventType, qty);
+
+      isAllFound = (eventsFound.size()>=qty);
+
+      long elapsedTime = System.currentTimeMillis() - startTime;
+      if (isAllFound || elapsedTime > timeOut) {
+        keepChecking = false;
+      } else {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    if (!isAllFound) {
+      log.info("Searching for {} event: {} in :-", qty, eventType);
+      Set<String> keys = getMapContents();
+      for (String key : keys) {
+        log.info(key);
+      }
+    }
+    return eventsFound;
+  }
+
+
+  public String getEvent(String eventType) {
+    String caseId = null;
+    boolean isFound;
+
+    isFound = gatewayEventMap.keySet().contains(eventType);
+
+    if (isFound) {
+      System.out.println(gatewayEventMap.values());
+    }
+
+    caseId = gatewayEventMap.get(eventType).getCaseId();
+//    for (Map.Entry<String, GatewayEventDTO> map: gatewayEventMap.entrySet()) {
+//
+//     caseId =  map.getValue().;
+//
+//    }
+
+    return caseId;
+  }
+
+
 
   public boolean hasEventTriggered(String caseID, String eventType) {
     return hasEventTriggered(caseID, eventType, 2000l);
