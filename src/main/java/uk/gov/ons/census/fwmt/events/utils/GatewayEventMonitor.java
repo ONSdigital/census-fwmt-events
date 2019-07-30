@@ -52,10 +52,12 @@ public class GatewayEventMonitor {
     enableEventMonitor("localhost");
   }
 
-  public void enableEventMonitor(String rabbitLocation) throws IOException, TimeoutException {
+  public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword) throws IOException, TimeoutException {
     gatewayEventMap = new HashMap<>();
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost(rabbitLocation);
+    factory.setUsername(rabbitUsername);
+    factory.setPassword(rabbitPassword);
     connection = factory.newConnection();
     channel = connection.createChannel();
 
