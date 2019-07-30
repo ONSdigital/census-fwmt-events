@@ -49,7 +49,7 @@ public class GatewayEventMonitor {
   }
 
   public void enableEventMonitor() throws IOException, TimeoutException {
-    enableEventMonitor("localhost");
+    enableEventMonitor("localhost", "guest", "guest");
   }
 
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword) throws IOException, TimeoutException {
