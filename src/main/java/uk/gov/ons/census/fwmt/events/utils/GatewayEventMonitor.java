@@ -34,13 +34,21 @@ public class GatewayEventMonitor {
   private Channel channel = null;
   private Connection connection = null;
 
-  public void tearDownGatewayEventMonitor() throws IOException, TimeoutException {
+  public void tearDownGatewayEventMonitor(){
     if (channel != null) {
-      channel.close();
+      try {
+        channel.close();
+      } catch (IOException | TimeoutException e) {
+        log.error("Problem closing rabbit channel", e);      
+      }
       channel = null;
     }
     if (connection != null) {
-      connection.close();
+      try {
+        connection.close();
+      } catch (IOException e) {
+        log.error("Problem closing rabbit connection", e);      
+      }
       connection = null;
     }
     if (gatewayEventMap != null) {
