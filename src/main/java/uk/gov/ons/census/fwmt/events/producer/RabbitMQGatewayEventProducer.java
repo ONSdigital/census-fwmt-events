@@ -31,7 +31,7 @@ class RabbitMQGatewayEventProducer implements GatewayEventProducer {
       msg = EventUtils.convertToJSON(event);
       rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayEventQueueConfig.GATEWAY_EVENTS_ROUTING_KEY, msg);
     } catch (Exception e) {
-      log.error(String.format("Failed to log RabbitMQ Event: {}", msg), e);
+      log.error("Failed to log RabbitMQ Event: {}", msg, e);
     }
   }
 
@@ -42,7 +42,7 @@ class RabbitMQGatewayEventProducer implements GatewayEventProducer {
       msg = EventUtils.convertToJSON(errorEvent);
       rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayEventQueueConfig.GATEWAY_EVENTS_ROUTING_KEY, msg);
     } catch (Exception e) {
-      log.error(String.format("Failed to log RabbitMQ Event: {}", msg), e);
+      log.error("Failed to log RabbitMQ Event: {}", msg, e);
     }
   }
 }

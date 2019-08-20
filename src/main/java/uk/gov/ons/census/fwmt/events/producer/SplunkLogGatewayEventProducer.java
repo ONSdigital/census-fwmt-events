@@ -18,7 +18,7 @@ public class SplunkLogGatewayEventProducer implements GatewayEventProducer {
       msg = EventUtils.convertToJSON(event);
       log.info("{} event: {}", event.getSource(), msg);
     } catch (Exception e) {
-      log.error(String.format("Failed to log RabbitMQ Event: {}", msg), e);
+      log.error("Failed to log RabbitMQ Event: {}", msg, e);
     }
   }
 
@@ -32,7 +32,7 @@ public class SplunkLogGatewayEventProducer implements GatewayEventProducer {
       }
       log.info("{} {} error event: {}", errorEvent.getSource(), errorEvent.getErrorEventType(), msg);
     } catch (Exception e) {
-      log.error(String.format("Failed to log RabbitMQ Event: {}", msg), e);
+      log.error("Failed to log RabbitMQ Event: {}", msg, e);
     }
   }
 }
