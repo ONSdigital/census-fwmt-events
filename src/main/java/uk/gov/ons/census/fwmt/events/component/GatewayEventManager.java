@@ -2,6 +2,7 @@ package uk.gov.ons.census.fwmt.events.component;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,15 +29,11 @@ public class GatewayEventManager {
   private String source;
   
   public void addEventTypes(String[] et) {
-    for (String e : et) {
-      eventTypes.add(e);
-    }
+    eventTypes.addAll(Arrays.asList(et));
   }
 
   public void addErrorEventTypes(String[] et) {
-    for (String e : et) {
-      errorEventTypes.add(e);
-    }
+    errorEventTypes.addAll(Arrays.asList(et));
   }
 
   public void setSource(String source) {

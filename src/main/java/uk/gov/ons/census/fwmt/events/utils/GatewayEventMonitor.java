@@ -97,7 +97,7 @@ public class GatewayEventMonitor {
 
   public Boolean checkForEvent(String caseID, String eventType) {
     boolean isFound;
-    isFound = gatewayEventMap.keySet().contains(createKey(caseID, eventType));
+    isFound = gatewayEventMap.containsKey(createKey(caseID, eventType));
 
     return isFound;
   }
@@ -117,7 +117,7 @@ public class GatewayEventMonitor {
 
 
   public Collection<GatewayEventDTO> grabEventsTriggered(String eventType, int qty, Long timeOut) {
-    Long startTime = System.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
     boolean keepChecking = true;
     boolean isAllFound = false;
 
@@ -154,7 +154,7 @@ public class GatewayEventMonitor {
     String caseId = null;
     boolean isFound;
 
-    isFound = gatewayEventMap.keySet().contains(eventType);
+    isFound = gatewayEventMap.containsKey(eventType);
 
     if (isFound) {
       System.out.println(gatewayEventMap.values());
@@ -177,7 +177,7 @@ public class GatewayEventMonitor {
   }
 
   public boolean hasEventTriggered(String caseID, String eventType, Long timeOut) {
-    Long startTime = System.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
     boolean keepChecking = true;
     boolean isFound = false;
 
