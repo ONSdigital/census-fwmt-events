@@ -21,7 +21,7 @@ description = 'census-fwmt-events'
 
 group = 'uk.gov.ons.census.fwmt'
 
-version = '1.0.14-SNAPSHOT'
+version = '1.0.16-SNAPSHOT'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -43,7 +43,6 @@ dependencies {
     compile("org.springframework:spring-web:5.1.5.RELEASE")
 
 
-    compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
 
 
