@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -23,9 +25,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
-@Slf4j
 @Component
 public class GatewayEventMonitor {
+  private static final Logger log = LoggerFactory.getLogger(GatewayEventMonitor.class);
 
   private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
   private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";

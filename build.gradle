@@ -44,6 +44,7 @@ dependencies {
 
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
 
+    compile 'com.godaddy:logging:1.2.5'
 
 
     compile("org.projectlombok:lombok:1.18.4")
