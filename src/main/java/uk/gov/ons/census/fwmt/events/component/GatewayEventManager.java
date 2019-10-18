@@ -71,6 +71,7 @@ public class GatewayEventManager {
         String value = (metadata[i]!=null)?metadata[i]:"null";
         Entry<String, String> entry = Map.entry(key, value);
         entries.add(entry);
+        i++;
       }
     }
     Entry<String, String>[] entryArray = entries.toArray(new Entry[entries.size()]);
