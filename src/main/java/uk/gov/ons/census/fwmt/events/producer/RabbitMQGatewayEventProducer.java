@@ -1,5 +1,7 @@
 package uk.gov.ons.census.fwmt.events.producer;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,10 @@ import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 import uk.gov.ons.census.fwmt.events.util.EventUtils;
 
-@Slf4j
 @Component
 class RabbitMQGatewayEventProducer implements GatewayEventProducer {
+
+  private static final Logger log = LoggerFactory.getLogger(RabbitMQGatewayEventProducer.class);
 
   @Autowired
   private RabbitTemplate rabbitTemplate;

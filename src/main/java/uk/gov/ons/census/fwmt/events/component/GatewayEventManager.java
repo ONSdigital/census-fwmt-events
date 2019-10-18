@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +19,8 @@ import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO.GatewayErrorEvent
 import uk.gov.ons.census.fwmt.events.producer.GatewayEventProducer;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
-@Slf4j
 public class GatewayEventManager {
+  private static final Logger log = LoggerFactory.getLogger(GatewayEventManager.class);
 
   @Autowired
   private List<GatewayEventProducer> gatewayEventProducers;
@@ -69,6 +71,7 @@ public class GatewayEventManager {
         String value = (metadata[i]!=null)?metadata[i]:"null";
         Entry<String, String> entry = Map.entry(key, value);
         entries.add(entry);
+        i++;
       }
     }
     Entry<String, String>[] entryArray = entries.toArray(new Entry[entries.size()]);
