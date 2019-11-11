@@ -86,6 +86,10 @@ public class GatewayEventManager {
     triggerErrorEvent(klass, null, message, caseId, errorEventType, new String[0]);
   }
 
+  public void triggerErrorEvent(Class klass, String message, String caseId, String errorEventType, String... metadata) {
+    triggerErrorEvent(klass, null, message, caseId, errorEventType, metadata);
+  }
+
   public void triggerErrorEvent(Class klass, Exception exception, String message, String caseId, String errorEventType, String... metadata) {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
     GatewayErrorEventDTOBuilder builder = GatewayErrorEventDTO.builder()
