@@ -63,9 +63,15 @@ public class GatewayEventMonitor {
   }
 
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword) throws IOException, TimeoutException {
+    enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, null);
+  }
+    public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port) throws IOException, TimeoutException {
     gatewayEventMap = new HashMap<>();
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost(rabbitLocation);
+    if (port!=null) {
+      factory.setPort(port);      
+    }
     factory.setUsername(rabbitUsername);
     factory.setPassword(rabbitPassword);
     connection = factory.newConnection();
