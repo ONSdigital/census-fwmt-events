@@ -1,6 +1,6 @@
 package uk.gov.ons.census.fwmt.events.data;
 
-import java.time.LocalTime;
+import java.util.Date;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ public class GatewayErrorEventDTO {
   private String caseId;
   private String source;
   private String errorEventType;
-  private LocalTime localTime;
+  private Date localTime;
   private Map<String, String> metadata;
   private String className;
   private String exceptionName;
