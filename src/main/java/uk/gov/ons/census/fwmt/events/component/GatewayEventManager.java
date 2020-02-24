@@ -1,6 +1,5 @@
 package uk.gov.ons.census.fwmt.events.component;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -51,7 +50,6 @@ public class GatewayEventManager {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
     if (eventTypes.contains(eventType)) {
       GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
-//          .caseId(caseId).source(source).eventType(eventType).localTime(LocalTime.now()).metadata(metaDataMap)
           .caseId(caseId).source(source).eventType(eventType).localTime(new Date()).metadata(metaDataMap)
           .build();
       for (GatewayEventProducer gep : gatewayEventProducers) {

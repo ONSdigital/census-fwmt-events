@@ -182,12 +182,6 @@ public class GatewayEventMonitor {
     }
 
     caseId = gatewayEventMap.get(eventType).getCaseId();
-    // for (Map.Entry<String, GatewayEventDTO> map: gatewayEventMap.entrySet())
-    // {
-    //
-    // caseId = map.getValue().;
-    //
-    // }
 
     return caseId;
   }
