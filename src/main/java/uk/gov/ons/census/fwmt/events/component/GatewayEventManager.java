@@ -1,23 +1,22 @@
 package uk.gov.ons.census.fwmt.events.component;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import lombok.extern.slf4j.Slf4j;
-import uk.gov.ons.census.fwmt.common.error.GatewayException;
+import com.godaddy.logging.Logger;
+import com.godaddy.logging.LoggerFactory;
+
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO.GatewayErrorEventDTOBuilder;
-import uk.gov.ons.census.fwmt.events.producer.GatewayEventProducer;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
+import uk.gov.ons.census.fwmt.events.producer.GatewayEventProducer;
 
 public class GatewayEventManager {
   private static final Logger log = LoggerFactory.getLogger(GatewayEventManager.class);
@@ -30,7 +29,7 @@ public class GatewayEventManager {
   private List<String> errorEventTypes = new ArrayList<>();
 
   private String source;
-  
+
   public void addEventTypes(String[] et) {
     eventTypes.addAll(Arrays.asList(et));
   }
@@ -42,7 +41,7 @@ public class GatewayEventManager {
   public void setSource(String source) {
     this.source = source;
   }
-  
+
   public void triggerEvent(String caseId, String eventType){
     triggerEvent(caseId, eventType, new String[0]);
   }
@@ -51,7 +50,7 @@ public class GatewayEventManager {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
     if (eventTypes.contains(eventType)) {
       GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
-          .caseId(caseId).source(source).eventType(eventType).localTime(LocalTime.now()).metadata(metaDataMap)
+          .caseId(caseId).source(source).eventType(eventType).localTime(new Date()).metadata(metaDataMap)
           .build();
       for (GatewayEventProducer gep : gatewayEventProducers) {
         gep.sendEvent(gatewayEventDTO);
@@ -94,7 +93,7 @@ public class GatewayEventManager {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
     GatewayErrorEventDTOBuilder builder = GatewayErrorEventDTO.builder()
         .className(klass.getName()).exceptionName((exception != null) ? exception.getClass().getName() : "<NONE>").message(message)
-        .caseId(caseId).errorEventType(errorEventType).source(source).localTime(LocalTime.now()).metadata(metaDataMap);
+        .caseId(caseId).errorEventType(errorEventType).source(source).localTime(new Date()).metadata(metaDataMap);
 
     if (errorEventTypes.contains(errorEventType)) {
       builder.errorEventType(errorEventType);

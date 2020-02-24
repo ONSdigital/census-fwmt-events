@@ -33,15 +33,18 @@ public class GatewayEventMonitor {
   private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static Map<String, GatewayEventDTO> gatewayEventMap = null;
+
+  private static List<String> eventToWatch = new ArrayList<>();
+
   private Channel channel = null;
   private Connection connection = null;
 
-  public void tearDownGatewayEventMonitor(){
+  public void tearDownGatewayEventMonitor() {
     if (channel != null) {
       try {
         channel.close();
       } catch (IOException | TimeoutException e) {
-        log.error("Problem closing rabbit channel", e);      
+        log.error("Problem closing rabbit channel", e);
       }
       channel = null;
     }
@@ -49,7 +52,7 @@ public class GatewayEventMonitor {
       try {
         connection.close();
       } catch (IOException e) {
-        log.error("Problem closing rabbit connection", e);      
+        log.error("Problem closing rabbit connection", e);
       }
       connection = null;
     }
@@ -65,12 +68,21 @@ public class GatewayEventMonitor {
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword) throws IOException, TimeoutException {
     enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, null);
   }
-    public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port) throws IOException, TimeoutException {
+
+  public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port) throws IOException, TimeoutException {
+    enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, port, Collections.emptyList());
+  }
+
+  public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port, List<String> eventsToListen)
+      throws IOException, TimeoutException {
     gatewayEventMap = new HashMap<>();
+    eventToWatch.clear();
+    eventToWatch.addAll(eventsToListen);
+
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost(rabbitLocation);
-    if (port!=null) {
-      factory.setPort(port);      
+    if (port != null) {
+      factory.setPort(port);
     }
     factory.setUsername(rabbitUsername);
     factory.setPassword(rabbitPassword);
@@ -96,8 +108,11 @@ public class GatewayEventMonitor {
             .build();
 
         String message = new String(body, StandardCharsets.UTF_8);
-        GatewayEventDTO dto = OBJECT_MAPPER.readValue(message.getBytes(), GatewayEventDTO.class);
-        gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dto);
+        log.info(message);
+        GatewayEventDTO dto = OBJECT_MAPPER.readValue(message, GatewayEventDTO.class);
+        if (eventToWatch.isEmpty() || eventToWatch.contains(dto.getEventType())) {
+          gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dto);
+        }
       }
     };
     channel.basicConsume(queueName, true, consumer);
@@ -114,15 +129,14 @@ public class GatewayEventMonitor {
     List<GatewayEventDTO> eventsFound = new ArrayList<>();
     Set<String> keys = gatewayEventMap.keySet();
 
-    for (String key: keys) {
-      if (key.endsWith(eventType)){
+    for (String key : keys) {
+      if (key.endsWith(eventType)) {
         eventsFound.add(gatewayEventMap.get(key));
       }
     }
 
     return eventsFound;
   }
-
 
   public Collection<GatewayEventDTO> grabEventsTriggered(String eventType, int qty, Long timeOut) {
     long startTime = System.currentTimeMillis();
@@ -134,7 +148,7 @@ public class GatewayEventMonitor {
     while (keepChecking) {
       eventsFound = getEventsForEventType(eventType, qty);
 
-      isAllFound = (eventsFound.size()>=qty);
+      isAllFound = (eventsFound.size() >= qty);
 
       long elapsedTime = System.currentTimeMillis() - startTime;
       if (isAllFound || elapsedTime > timeOut) {
@@ -157,7 +171,6 @@ public class GatewayEventMonitor {
     return eventsFound;
   }
 
-
   public String getEvent(String eventType) {
     String caseId = null;
     boolean isFound;
@@ -169,16 +182,9 @@ public class GatewayEventMonitor {
     }
 
     caseId = gatewayEventMap.get(eventType).getCaseId();
-//    for (Map.Entry<String, GatewayEventDTO> map: gatewayEventMap.entrySet()) {
-//
-//     caseId =  map.getValue().;
-//
-//    }
 
     return caseId;
   }
-
-
 
   public boolean hasEventTriggered(String caseID, String eventType) {
     return hasEventTriggered(caseID, eventType, 2000l);
