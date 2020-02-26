@@ -18,7 +18,7 @@ plugins {
 
 description = 'census-fwmt-events'
 group = 'uk.gov.ons.census.fwmt'
-version = '1.0.21-SNAPSHOT'
+version = rootProject.file('version.txt').text.trim()
 
 sourceCompatibility = 11
 targetCompatibility = 11
