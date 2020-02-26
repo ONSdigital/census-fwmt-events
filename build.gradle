@@ -17,9 +17,7 @@ plugins {
 }
 
 description = 'census-fwmt-events'
-
 group = 'uk.gov.ons.census.fwmt'
-
 version = '1.0.21-SNAPSHOT'
 
 sourceCompatibility = 11
@@ -27,13 +25,27 @@ targetCompatibility = 11
 
 repositories {
     mavenLocal()
-    mavenCentral()
-    if (!project.hasProperty('omitSDCArtifactory')) {
-        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local' }
-        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local' }
+
+    maven {
+        url 'https://ons.jfrog.io/ons/libs-releases-virtual'
+        credentials {
+            username "${artifactory_user}"
+            password "${artifactory_password}"
+        }
     }
+    maven {
+        url 'https://ons.jfrog.io/ons/libs-snapshots-virtual'
+        credentials {
+            username "${artifactory_user}"
+            password "${artifactory_password}"
+        }
+    }
+
+//        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local' }
+//        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local' }
+    mavenCentral()
 }
-//more testing
+
 dependencies {
     compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.25-RELEASE")
 
@@ -41,27 +53,27 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
     compile("org.springframework:spring-web:5.1.5.RELEASE")
 
-
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8")
 
     compile 'com.godaddy:logging:1.2.5'
-
 
     compile("org.projectlombok:lombok:1.18.4")
     annotationProcessor("org.projectlombok:lombok:1.18.4")
 }
 
 artifactory {
-    contextUrl = System.getenv('ARTIFACTORY_URL')
+    contextUrl = 'https://ons.jfrog.io/ons/'
     publish {
         repository {
-            repoKey = 'libs-release-local'
-            username = System.getenv('ARTIFACTORY_USERNAME')
-            password = System.getenv('ARTIFACTORY_PASSWORD')
+            repoKey = 'libs-releases-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+        }
+        defaults {
+            publishBuildInfo = false
         }
     }
 }
-
 
 publishing {
     publications {
@@ -74,7 +86,6 @@ publishing {
         }
     }
 }
-
 
 artifactoryPublish {
     publications 'maven'
