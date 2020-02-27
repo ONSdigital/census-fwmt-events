@@ -13,7 +13,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'com.jfrog.artifactory' version '4.8.1'
+    id 'com.jfrog.artifactory' version '4.13.0'
 }
 
 description = 'census-fwmt-events'
