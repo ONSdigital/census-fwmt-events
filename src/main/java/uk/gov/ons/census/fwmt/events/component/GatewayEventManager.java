@@ -90,6 +90,7 @@ public class GatewayEventManager {
   }
 
   public void triggerErrorEvent(Class klass, Exception exception, String message, String caseId, String errorEventType, String... metadata) {
+    log.error(message, exception);
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
     GatewayErrorEventDTOBuilder builder = GatewayErrorEventDTO.builder()
         .className(klass.getName()).exceptionName((exception != null) ? exception.getClass().getName() : "<NONE>").message(message)
