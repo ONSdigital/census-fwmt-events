@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.25-RELEASE")
+    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.48-RELEASE")
 
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
