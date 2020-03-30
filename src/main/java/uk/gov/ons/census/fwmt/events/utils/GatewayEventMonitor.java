@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 @Component
@@ -75,7 +76,7 @@ public class GatewayEventMonitor {
 
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port, List<String> eventsToListen)
       throws IOException, TimeoutException {
-    gatewayEventMap = new HashMap<>();
+    gatewayEventMap = new ConcurrentHashMap<>();
     eventToWatch.clear();
     eventToWatch.addAll(eventsToListen);
 
