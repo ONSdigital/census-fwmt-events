@@ -62,19 +62,17 @@ public class GatewayEventManager {
 
   private Map<String, String> createMetaDataMap(String... metadata) {
     int i = 0;
-    List<Entry> entries = new ArrayList<>();
+    Map<String, String> metadataMap = new HashMap<>();
     while (i< metadata.length) {
       String key = metadata[i];
       i++;
       if (i<metadata.length) {
         String value = (metadata[i]!=null)?metadata[i]:"null";
-        Entry<String, String> entry = Map.entry(key, value);
-        entries.add(entry);
+        metadataMap.put(key, value);
         i++;
       }
     }
-    Entry<String, String>[] entryArray = entries.toArray(new Entry[entries.size()]);
-    return Map.ofEntries(entryArray);
+    return metadataMap;
   }
 
   public void triggerErrorEvent(Class klass, Exception exception, String message, String caseId, String errorEventType) {
@@ -98,7 +96,7 @@ public class GatewayEventManager {
     if (errorEventTypes.contains(errorEventType)) {
       builder.errorEventType(errorEventType);
     } else {
-      if (metaDataMap==null) metaDataMap = new HashMap<String, String>();
+      if (metaDataMap==null) metaDataMap = new HashMap<>();
       metaDataMap.put(GatewayEventProducer.INVALID_ERROR_TYPE, errorEventType);
     }
     for (GatewayEventProducer gep : gatewayEventProducers) {
