@@ -1,5 +1,18 @@
 package uk.gov.ons.census.fwmt.events.utils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -13,18 +26,12 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
-import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
+import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
+import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
 @Component
 public class GatewayEventMonitor {
@@ -34,6 +41,7 @@ public class GatewayEventMonitor {
   private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static Map<String, GatewayEventDTO> gatewayEventMap = null;
+  private static Map<String, GatewayErrorEventDTO> gatewayErrorEventMap = null;
 
   private static List<String> eventToWatch = new ArrayList<>();
 
@@ -77,6 +85,7 @@ public class GatewayEventMonitor {
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port, List<String> eventsToListen)
       throws IOException, TimeoutException {
     gatewayEventMap = new ConcurrentHashMap<>();
+    gatewayErrorEventMap = new ConcurrentHashMap<>();
     eventToWatch.clear();
     eventToWatch.addAll(eventsToListen);
 
@@ -109,10 +118,16 @@ public class GatewayEventMonitor {
             .build();
 
         String message = new String(body, StandardCharsets.UTF_8);
-        log.info(message);
-        GatewayEventDTO dto = OBJECT_MAPPER.readValue(message, GatewayEventDTO.class);
-        if (eventToWatch.isEmpty() || eventToWatch.contains(dto.getEventType())) {
-          gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dto);
+        log.debug(message);
+
+        if (message != null && message.contains("exceptionName")) {
+          GatewayErrorEventDTO dto = OBJECT_MAPPER.readValue(message, GatewayErrorEventDTO.class);
+          gatewayErrorEventMap.put(createKey(dto.getCaseId(), dto.getErrorEventType()), dto);
+        } else {
+          GatewayEventDTO dto = OBJECT_MAPPER.readValue(message, GatewayEventDTO.class);
+          if (eventToWatch.isEmpty() || eventToWatch.contains(dto.getEventType())) {
+            gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dto);
+          }
         }
       }
     };
@@ -122,7 +137,17 @@ public class GatewayEventMonitor {
   public Boolean checkForEvent(String caseID, String eventType) {
     boolean isFound;
     isFound = gatewayEventMap.containsKey(createKey(caseID, eventType));
+    if (!isFound) {
+    }
+    return isFound;
+  }
 
+  // TODO Can we use all that lamda stuff to do something funky
+  public Boolean checkForErrorEvent(String caseID, String eventType) {
+    boolean isFound;
+    isFound = gatewayErrorEventMap.containsKey(createKey(caseID, eventType));
+    if (!isFound) {
+    }
     return isFound;
   }
 
@@ -133,6 +158,19 @@ public class GatewayEventMonitor {
     for (String key : keys) {
       if (key.endsWith(eventType)) {
         eventsFound.add(gatewayEventMap.get(key));
+      }
+    }
+
+    return eventsFound;
+  }
+
+  public List<GatewayErrorEventDTO> getErrorEventsForErrorEventType(String eventType, int qty) {
+    List<GatewayErrorEventDTO> eventsFound = new ArrayList<>();
+    Set<String> keys = gatewayErrorEventMap.keySet();
+
+    for (String key : keys) {
+      if (key.endsWith(eventType)) {
+        eventsFound.add(gatewayErrorEventMap.get(key));
       }
     }
 
@@ -164,7 +202,40 @@ public class GatewayEventMonitor {
     }
     if (!isAllFound) {
       log.info("Searching for {} event: {} in :-", qty, eventType);
-      Set<String> keys = getMapContents();
+      Set<String> keys = gatewayEventMap.keySet();
+      for (String key : keys) {
+        log.info(key);
+      }
+    }
+    return eventsFound;
+  }
+
+  public Collection<GatewayErrorEventDTO> grabErrorEventsTriggered(String eventType, int qty, Long timeOut) {
+    long startTime = System.currentTimeMillis();
+    boolean keepChecking = true;
+    boolean isAllFound = false;
+
+    List<GatewayErrorEventDTO> eventsFound = null;
+
+    while (keepChecking) {
+      eventsFound = getErrorEventsForErrorEventType(eventType, qty);
+
+      isAllFound = (eventsFound.size() >= qty);
+
+      long elapsedTime = System.currentTimeMillis() - startTime;
+      if (isAllFound || elapsedTime > timeOut) {
+        keepChecking = false;
+      } else {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    if (!isAllFound) {
+      log.info("Searching for {} event: {} in :-", qty, eventType);
+      Set<String> keys = gatewayErrorEventMap.keySet();
       for (String key : keys) {
         log.info(key);
       }
@@ -173,17 +244,12 @@ public class GatewayEventMonitor {
   }
 
   public String getEvent(String eventType) {
-    String caseId = null;
-    boolean isFound;
+    String caseId = gatewayEventMap.get(eventType).getCaseId();
+    return caseId;
+  }
 
-    isFound = gatewayEventMap.containsKey(eventType);
-
-    if (isFound) {
-      System.out.println(gatewayEventMap.values());
-    }
-
-    caseId = gatewayEventMap.get(eventType).getCaseId();
-
+  public String getErrorEvent(String eventType) {
+    String caseId = gatewayErrorEventMap.get(eventType).getCaseId();
     return caseId;
   }
 
@@ -211,8 +277,8 @@ public class GatewayEventMonitor {
       }
     }
     if (!isFound) {
-      log.info("Searcjing for key:" + caseID + eventType + " in :-");
-      Set<String> keys = getMapContents();
+      log.info("Searching for key:" + caseID + eventType + " in :-");
+      Set<String> keys = gatewayEventMap.keySet();
       for (String key : keys) {
         log.info(key);
       }
@@ -220,11 +286,37 @@ public class GatewayEventMonitor {
     return isFound;
   }
 
-  private Set<String> getMapContents() {
-    Set<String> eventMapKeys;
-    eventMapKeys = gatewayEventMap.keySet();
+  public boolean hasErrorEventTriggered(String caseID, String eventType) {
+    return hasErrorEventTriggered(caseID, eventType, 2000l);
+  }
 
-    return eventMapKeys;
+  public boolean hasErrorEventTriggered(String caseID, String eventType, Long timeOut) {
+    long startTime = System.currentTimeMillis();
+    boolean keepChecking = true;
+    boolean isFound = false;
+
+    while (keepChecking) {
+      isFound = checkForErrorEvent(caseID, eventType);
+
+      long elapsedTime = System.currentTimeMillis() - startTime;
+      if (isFound || elapsedTime > timeOut) {
+        keepChecking = false;
+      } else {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    if (!isFound) {
+      log.info("Searcjing for key:" + caseID + eventType + " in :-");
+      Set<String> keys = gatewayErrorEventMap.keySet();
+      for (String key : keys) {
+        log.info(key);
+      }
+    }
+    return isFound;
   }
 
   private String createKey(String caseID, String eventType) {
