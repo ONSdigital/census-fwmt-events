@@ -24,18 +24,20 @@ public class GatewayEventManager {
   @Autowired
   private List<GatewayEventProducer> gatewayEventProducers;
 
-  private List<String> eventTypes = new ArrayList<>();
+//  private List<String> eventTypes = new ArrayList<>();
 
-  private List<String> errorEventTypes = new ArrayList<>();
+//  private List<String> errorEventTypes = new ArrayList<>();
 
   private String source;
 
+  @Deprecated
   public void addEventTypes(String[] et) {
-    eventTypes.addAll(Arrays.asList(et));
+//    eventTypes.addAll(Arrays.asList(et));
   }
 
+  @Deprecated
   public void addErrorEventTypes(String[] et) {
-    errorEventTypes.addAll(Arrays.asList(et));
+//    errorEventTypes.addAll(Arrays.asList(et));
   }
 
   public void setSource(String source) {
@@ -48,16 +50,16 @@ public class GatewayEventManager {
 
   public void triggerEvent(String caseId, String eventType, String... metadata) {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
-    if (eventTypes.contains(eventType)) {
+//    if (eventTypes.contains(eventType)) {
       GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
           .caseId(caseId).source(source).eventType(eventType).localTime(new Date()).metadata(metaDataMap)
           .build();
       for (GatewayEventProducer gep : gatewayEventProducers) {
         gep.sendEvent(gatewayEventDTO);
       }
-    } else {
-      log.error("Invalid event type: {}", eventType);
-    }
+    // } else {
+    //   log.error("Invalid event type: {}", eventType);
+    // }
   }
 
   private Map<String, String> createMetaDataMap(String... metadata) {
@@ -93,12 +95,12 @@ public class GatewayEventManager {
         .className(klass.getName()).exceptionName((exception != null) ? exception.getClass().getName() : "<NONE>").message(message)
         .caseId(caseId).errorEventType(errorEventType).source(source).localTime(new Date()).metadata(metaDataMap);
 
-    if (errorEventTypes.contains(errorEventType)) {
+//    if (errorEventTypes.contains(errorEventType)) {
       builder.errorEventType(errorEventType);
-    } else {
-      if (metaDataMap==null) metaDataMap = new HashMap<>();
-      metaDataMap.put(GatewayEventProducer.INVALID_ERROR_TYPE, errorEventType);
-    }
+    // } else {
+    //   if (metaDataMap==null) metaDataMap = new HashMap<>();
+    //   metaDataMap.put(GatewayEventProducer.INVALID_ERROR_TYPE, errorEventType);
+    // }
     for (GatewayEventProducer gep : gatewayEventProducers) {
       gep.sendErrorEvent(builder.build());
     }

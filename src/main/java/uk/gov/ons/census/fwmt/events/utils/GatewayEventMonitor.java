@@ -40,8 +40,8 @@ public class GatewayEventMonitor {
   private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
   private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-  private static Map<String, GatewayEventDTO> gatewayEventMap = null;
-  private static Map<String, GatewayErrorEventDTO> gatewayErrorEventMap = null;
+  private static Map<String, List<GatewayEventDTO>> gatewayEventMap = null;
+  private static Map<String, List<GatewayErrorEventDTO>> gatewayErrorEventMap = null;
 
   private static List<String> eventToWatch = new ArrayList<>();
 
@@ -122,11 +122,17 @@ public class GatewayEventMonitor {
 
         if (message != null && message.contains("exceptionName")) {
           GatewayErrorEventDTO dto = OBJECT_MAPPER.readValue(message, GatewayErrorEventDTO.class);
-          gatewayErrorEventMap.put(createKey(dto.getCaseId(), dto.getErrorEventType()), dto);
+          String key = createKey(dto.getCaseId(), dto.getErrorEventType());
+          List<GatewayErrorEventDTO> dtoList =  (gatewayErrorEventMap.keySet().contains(key))?gatewayErrorEventMap.get(key):new ArrayList<>();
+          dtoList.add(dto);
+          gatewayErrorEventMap.put(createKey(dto.getCaseId(), dto.getErrorEventType()), dtoList);
         } else {
           GatewayEventDTO dto = OBJECT_MAPPER.readValue(message, GatewayEventDTO.class);
           if (eventToWatch.isEmpty() || eventToWatch.contains(dto.getEventType())) {
-            gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dto);
+            String key = createKey(dto.getCaseId(), dto.getEventType());
+            List<GatewayEventDTO> dtoList =  (gatewayEventMap.keySet().contains(key))?gatewayEventMap.get(key):new ArrayList<>();
+            dtoList.add(dto);
+            gatewayEventMap.put(createKey(dto.getCaseId(), dto.getEventType()), dtoList);
           }
         }
       }
@@ -157,7 +163,7 @@ public class GatewayEventMonitor {
 
     for (String key : keys) {
       if (key.endsWith(eventType)) {
-        eventsFound.add(gatewayEventMap.get(key));
+        eventsFound.addAll(gatewayEventMap.get(key));
       }
     }
 
@@ -170,7 +176,7 @@ public class GatewayEventMonitor {
 
     for (String key : keys) {
       if (key.endsWith(eventType)) {
-        eventsFound.add(gatewayErrorEventMap.get(key));
+        eventsFound.addAll(gatewayErrorEventMap.get(key));
       }
     }
 
@@ -243,15 +249,15 @@ public class GatewayEventMonitor {
     return eventsFound;
   }
 
-  public String getEvent(String eventType) {
-    String caseId = gatewayEventMap.get(eventType).getCaseId();
-    return caseId;
-  }
+  // public String getEvent(String eventType) {
+  //   String caseId = gatewayEventMap.get(eventType).getCaseId();
+  //   return caseId;
+  // }
 
-  public String getErrorEvent(String eventType) {
-    String caseId = gatewayErrorEventMap.get(eventType).getCaseId();
-    return caseId;
-  }
+  // public String getErrorEvent(String eventType) {
+  //   String caseId = gatewayErrorEventMap.get(eventType).getCaseId();
+  //   return caseId;
+  // }
 
   public boolean hasEventTriggered(String caseID, String eventType) {
     return hasEventTriggered(caseID, eventType, 2000l);
