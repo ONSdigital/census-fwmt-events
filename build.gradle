@@ -40,15 +40,10 @@ repositories {
             password "${artifactory_password}"
         }
     }
-
-//        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-release-local' }
-//        maven { url 'http://artifactory-sdc.onsdigital.uk/artifactory/libs-snapshot-local' }
     mavenCentral()
 }
 
 dependencies {
-    compile("uk.gov.ons.census.fwmt:census-fwmt-common:1.0.48-RELEASE")
-
     compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
     compile("org.springframework.boot:spring-boot-starter-amqp:${springBootVersion}")
     compile("org.springframework:spring-web:5.1.5.RELEASE")
