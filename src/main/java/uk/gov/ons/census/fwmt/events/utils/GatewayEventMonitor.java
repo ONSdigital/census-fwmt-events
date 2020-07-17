@@ -48,9 +48,12 @@ public class GatewayEventMonitor {
   private Channel channel = null;
   private Connection connection = null;
 
+  private String queueName;
+
   public void tearDownGatewayEventMonitor() {
     if (channel != null) {
       try {
+        channel.queueDelete(queueName);
         channel.close();
       } catch (IOException | TimeoutException e) {
         log.error("Problem closing rabbit channel", e);
@@ -100,7 +103,7 @@ public class GatewayEventMonitor {
     channel = connection.createChannel();
 
     channel.exchangeDeclare(GATEWAY_EVENTS_EXCHANGE, "fanout", true);
-    String queueName = channel.queueDeclare().getQueue();
+    queueName = channel.queueDeclare().getQueue();
     channel.queueBind(queueName, GATEWAY_EVENTS_EXCHANGE, GATEWAY_EVENTS_ROUTING_KEY);
 
     Consumer consumer = new DefaultConsumer(channel) {
@@ -181,6 +184,10 @@ public class GatewayEventMonitor {
     }
 
     return eventsFound;
+  }
+
+  public String getQueueName() {
+    return queueName;
   }
 
   public Collection<GatewayEventDTO> grabEventsTriggered(String eventType, int qty, Long timeOut) {
@@ -327,5 +334,11 @@ public class GatewayEventMonitor {
 
   private String createKey(String caseID, String eventType) {
     return caseID + " " + eventType;
+  }
+
+  public void reset() {
+    gatewayEventMap.clear();
+    gatewayErrorEventMap.clear();
+
   }
 }
