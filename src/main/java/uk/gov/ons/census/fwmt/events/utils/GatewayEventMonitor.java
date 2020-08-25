@@ -37,8 +37,12 @@ import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 public class GatewayEventMonitor {
   private static final Logger log = LoggerFactory.getLogger(GatewayEventMonitor.class);
 
-  private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
-  private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
+//  private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
+//  private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
+
+  private static final String FFA_EVENTS_EXCHANGE = "FFA.Events.Exchange";
+  private static final String FFA_EVENTS_ROUTING_KEY = "#";
+  
   private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static Map<String, List<GatewayEventDTO>> gatewayEventMap = null;
   private static Map<String, List<GatewayErrorEventDTO>> gatewayErrorEventMap = null;
@@ -102,9 +106,11 @@ public class GatewayEventMonitor {
     connection = factory.newConnection();
     channel = connection.createChannel();
 
-    channel.exchangeDeclare(GATEWAY_EVENTS_EXCHANGE, "fanout", true);
+//    channel.exchangeDeclare(GATEWAY_EVENTS_EXCHANGE, "fanout", true);
+    channel.exchangeDeclare(FFA_EVENTS_EXCHANGE, "topic", true);
     queueName = channel.queueDeclare().getQueue();
-    channel.queueBind(queueName, GATEWAY_EVENTS_EXCHANGE, GATEWAY_EVENTS_ROUTING_KEY);
+//    channel.queueBind(queueName, GATEWAY_EVENTS_EXCHANGE, GATEWAY_EVENTS_ROUTING_KEY);
+    channel.queueBind(queueName, FFA_EVENTS_EXCHANGE, FFA_EVENTS_ROUTING_KEY);
 
     Consumer consumer = new DefaultConsumer(channel) {
       @Override

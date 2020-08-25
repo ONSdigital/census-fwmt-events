@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
@@ -24,10 +25,16 @@ public class GatewayEventQueueConfig {
 
   public static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
   public static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
+  public static final String FFA_EVENTS_EXCHANGE = "FFA.Events.Exchange";
 
   @Bean
   public FanoutExchange eventExchange() {
     return new FanoutExchange(GATEWAY_EVENTS_EXCHANGE);
+  }  
+  
+  @Bean
+  public TopicExchange eventTopicExchange() {
+    return new TopicExchange(FFA_EVENTS_EXCHANGE);
   }
 
   @Bean("GW_EVENT_MC")
