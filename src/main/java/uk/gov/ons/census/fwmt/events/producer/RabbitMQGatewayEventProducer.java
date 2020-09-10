@@ -35,6 +35,7 @@ class RabbitMQGatewayEventProducer implements GatewayEventProducer {
     } catch (Exception e) {
       log.error("Failed to log RabbitMQ Event: {}", msg, e);
     }
+
   }
 
   @Override
