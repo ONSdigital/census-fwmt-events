@@ -2,22 +2,22 @@
 - link to jira ticket/feature?
 
 # Proposed Changes
-- Description of what changes were made 
-
-# Additional Info
-- How to demonstrate functionality  
+- Describe what changes were made and why 
 
 # Checklist
+- [X] I've not went through the checklist
 - [ ] Tests
-- [x] Sensitive Data not being logged
+- [ ] Sensitive Data not being logged
 - [ ] Documentation Updated ( where required)
 
-
 # How it was tested
+- [X] Not tested
 - [ ] Unit tested
 - [ ] Ran the acceptance tests
 - [ ] Manually Tested
-- [ ] Not tested becase my coding skills are flawless
 
+# Additional Info
+- How to demonstrate functionality
+- why it's not been tested?  
 
 # Screenshots
