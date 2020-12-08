@@ -2,10 +2,18 @@
 - link to jira ticket/feature?
 
 # Proposed Changes
-- Describe what changes were made and why 
+- Describe what changes were made 
+
+
+# Dependencies 
+This library has dependencies, please confirm that they are not broken.
+Check to confirm that they still work.
+
+- [ ] JobService
+
+// What else goes in here????
 
 # Checklist
-- [X] I've not went through the checklist
 - [ ] Tests
 - [ ] Sensitive Data not being logged
 - [ ] Documentation Updated ( where required)
