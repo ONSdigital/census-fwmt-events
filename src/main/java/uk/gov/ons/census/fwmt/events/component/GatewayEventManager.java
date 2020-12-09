@@ -20,42 +20,33 @@ public class GatewayEventManager {
 
   private String source;
 
-  @Deprecated
-  public void addEventTypes(String[] et) {
-    log.error("Method deprecated - don't use ");
-  }
-
-  @Deprecated
-  public void addErrorEventTypes(String[] et) {
-    log.error("Method deprecated - don't use ");
-  }
 
   public void setSource(String source) {
     this.source = source;
   }
 
-  public void triggerEvent(String caseId, String eventType){
+  public void triggerEvent(String caseId, String eventType) {
     triggerEvent(caseId, eventType, new String[0]);
   }
 
   public void triggerEvent(String caseId, String eventType, String... metadata) {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
-      GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
-          .caseId(caseId).source(source).eventType(eventType).localTime(new Date()).metadata(metaDataMap)
-          .build();
-      for (GatewayEventProducer gep : gatewayEventProducers) {
-        gep.sendEvent(gatewayEventDTO);
-      }
+    GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
+        .caseId(caseId).source(source).eventType(eventType).localTime(new Date()).metadata(metaDataMap)
+        .build();
+    for (GatewayEventProducer gep : gatewayEventProducers) {
+      gep.sendEvent(gatewayEventDTO);
+    }
   }
 
   private Map<String, String> createMetaDataMap(String... metadata) {
     int i = 0;
     Map<String, String> metadataMap = new HashMap<>();
-    while (i< metadata.length) {
+    while (i < metadata.length) {
       String key = metadata[i];
       i++;
-      if (i<metadata.length) {
-        String value = (metadata[i]!=null)?metadata[i]:"null";
+      if (i < metadata.length) {
+        String value = (metadata[i] != null) ? metadata[i] : "null";
         metadataMap.put(key, value);
         i++;
       }
@@ -81,7 +72,7 @@ public class GatewayEventManager {
         .className(klass.getName()).exceptionName((exception != null) ? exception.getClass().getName() : "<NONE>").message(message)
         .caseId(caseId).errorEventType(errorEventType).source(source).localTime(new Date()).metadata(metaDataMap);
 
-      builder.errorEventType(errorEventType);
+    builder.errorEventType(errorEventType);
     for (GatewayEventProducer gep : gatewayEventProducers) {
       gep.sendErrorEvent(builder.build());
     }

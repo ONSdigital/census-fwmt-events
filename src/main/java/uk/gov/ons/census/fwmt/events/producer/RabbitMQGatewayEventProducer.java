@@ -11,11 +11,13 @@ import uk.gov.ons.census.fwmt.events.config.GatewayEventQueueConfig;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
+/**
+ * This producer is only really used for managing our acceptance testing
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Component
-class RabbitMQGatewayEventProducer implements GatewayEventProducer {
-
+public class RabbitMQGatewayEventProducer implements GatewayEventProducer {
 
   @Qualifier("GW_EVENT_RT")
   private final RabbitTemplate rabbitTemplate;
