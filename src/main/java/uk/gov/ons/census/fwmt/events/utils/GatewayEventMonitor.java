@@ -1,41 +1,27 @@
 package uk.gov.ons.census.fwmt.events.utils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-
+import com.rabbitmq.client.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Component;
-
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
+
+@Slf4j
 @Component
 public class GatewayEventMonitor {
-  private static final Logger log = LoggerFactory.getLogger(GatewayEventMonitor.class);
 
   private static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
   private static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
@@ -255,16 +241,6 @@ public class GatewayEventMonitor {
     }
     return eventsFound;
   }
-
-  // public String getEvent(String eventType) {
-  //   String caseId = gatewayEventMap.get(eventType).getCaseId();
-  //   return caseId;
-  // }
-
-  // public String getErrorEvent(String eventType) {
-  //   String caseId = gatewayErrorEventMap.get(eventType).getCaseId();
-  //   return caseId;
-  // }
 
   public boolean hasEventTriggered(String caseID, String eventType) {
     return hasEventTriggered(caseID, eventType, 2000l);

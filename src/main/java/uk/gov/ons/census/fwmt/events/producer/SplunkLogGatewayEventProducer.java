@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
+@Deprecated
 @Component
 public class SplunkLogGatewayEventProducer implements GatewayEventProducer {
   private static final Logger log = LoggerFactory.getLogger(SplunkLogGatewayEventProducer.class);

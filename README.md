@@ -16,5 +16,10 @@ Records get processed and then the acceptance tests interrogate event queue for 
 #### Logging
 Every time an event occurs it is then logged as part of the process. These logs are used for creation of the Log metrics
 
+## Testing
+To test locally build jar to local using
+```
+  ./gradlew clean publishToMavenLocal
+```
 
 

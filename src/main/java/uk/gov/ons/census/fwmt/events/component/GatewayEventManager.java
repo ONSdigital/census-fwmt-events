@@ -1,43 +1,33 @@
 package uk.gov.ons.census.fwmt.events.component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO.GatewayErrorEventDTOBuilder;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 import uk.gov.ons.census.fwmt.events.producer.GatewayEventProducer;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RequiredArgsConstructor
+@Slf4j
 public class GatewayEventManager {
-  private static final Logger log = LoggerFactory.getLogger(GatewayEventManager.class);
 
-  @Autowired
-  private List<GatewayEventProducer> gatewayEventProducers;
-
-//  private List<String> eventTypes = new ArrayList<>();
-
-//  private List<String> errorEventTypes = new ArrayList<>();
+  private final List<GatewayEventProducer> gatewayEventProducers;
 
   private String source;
 
   @Deprecated
   public void addEventTypes(String[] et) {
-//    eventTypes.addAll(Arrays.asList(et));
+    log.error("Method deprecated - don't use ");
   }
 
   @Deprecated
   public void addErrorEventTypes(String[] et) {
-//    errorEventTypes.addAll(Arrays.asList(et));
+    log.error("Method deprecated - don't use ");
   }
 
   public void setSource(String source) {
@@ -50,16 +40,12 @@ public class GatewayEventManager {
 
   public void triggerEvent(String caseId, String eventType, String... metadata) {
     Map<String, String> metaDataMap = createMetaDataMap(metadata);
-//    if (eventTypes.contains(eventType)) {
       GatewayEventDTO gatewayEventDTO = GatewayEventDTO.builder()
           .caseId(caseId).source(source).eventType(eventType).localTime(new Date()).metadata(metaDataMap)
           .build();
       for (GatewayEventProducer gep : gatewayEventProducers) {
         gep.sendEvent(gatewayEventDTO);
       }
-    // } else {
-    //   log.error("Invalid event type: {}", eventType);
-    // }
   }
 
   private Map<String, String> createMetaDataMap(String... metadata) {
@@ -95,15 +81,9 @@ public class GatewayEventManager {
         .className(klass.getName()).exceptionName((exception != null) ? exception.getClass().getName() : "<NONE>").message(message)
         .caseId(caseId).errorEventType(errorEventType).source(source).localTime(new Date()).metadata(metaDataMap);
 
-//    if (errorEventTypes.contains(errorEventType)) {
       builder.errorEventType(errorEventType);
-    // } else {
-    //   if (metaDataMap==null) metaDataMap = new HashMap<>();
-    //   metaDataMap.put(GatewayEventProducer.INVALID_ERROR_TYPE, errorEventType);
-    // }
     for (GatewayEventProducer gep : gatewayEventProducers) {
       gep.sendErrorEvent(builder.build());
     }
   }
-
 }
