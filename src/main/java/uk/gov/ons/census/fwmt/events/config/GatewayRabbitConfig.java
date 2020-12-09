@@ -1,26 +1,28 @@
 package uk.gov.ons.census.fwmt.events.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
 @Configuration
-public class GatewayEventQueueConfig {
+public class GatewayRabbitConfig {
 
   public static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
   public static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
@@ -28,6 +30,26 @@ public class GatewayEventQueueConfig {
   @Bean
   public FanoutExchange eventExchange() {
     return new FanoutExchange(GATEWAY_EVENTS_EXCHANGE);
+  }
+
+  @Bean(name = "gatewayConnectionFactory")
+  public CachingConnectionFactory gatewayConnectionFactory(
+      @Value("${app.rabbitmq.gw.host}") String host,
+      @Value("${app.rabbitmq.gw.port}") int port,
+      @Value("${app.rabbitmq.gw.username}") String username,
+      @Value("${app.rabbitmq.gw.password}") String password,
+      @Value("${app.rabbitmq.gw.virtualHost}") String virtualHost){
+
+    log.info("Creating gatewayConnectionFactory with host: {}, on port {}", host, port);
+
+    final CachingConnectionFactory connectionFactory = new CachingConnectionFactory(host, port);
+    connectionFactory.setHost(host);
+    connectionFactory.setPort(port);
+    connectionFactory.setUsername(username);
+    connectionFactory.setPassword(password);
+    connectionFactory.setVirtualHost(virtualHost);
+
+    return connectionFactory;
   }
 
   @Bean("GW_EVENT_MC")
@@ -40,8 +62,8 @@ public class GatewayEventQueueConfig {
   }
 
   @Bean("GW_EVENT_RT")
-  public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, @Qualifier("GW_EVENT_MC") MessageConverter messageConverter) {
-    RabbitTemplate template = new RabbitTemplate(connectionFactory);
+  public RabbitTemplate rabbitTemplate(@Qualifier("gatewayConnectionFactory") ConnectionFactory gatewayConnectionFactory, @Qualifier("GW_EVENT_MC") MessageConverter messageConverter) {
+    RabbitTemplate template = new RabbitTemplate(gatewayConnectionFactory);
     template.setMessageConverter(messageConverter);
     return template;
   }
