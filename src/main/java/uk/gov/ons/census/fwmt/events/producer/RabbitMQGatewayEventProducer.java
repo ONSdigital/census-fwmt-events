@@ -49,7 +49,7 @@ public class RabbitMQGatewayEventProducer implements GatewayEventProducer {
   public void sendErrorEvent(GatewayErrorEventDTO errorEvent) {
     try {
       log.info("Sending error to the following exchange : {} with queue name {}", errorExchange, errorQueue);
-      rabbitTemplate.convertAndSend(errorExchange, errorQueue, errorEvent);
+      rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayRabbitConfig.GATEWAY_EVENTS_ROUTING_KEY, errorEvent);
     } catch (Exception e) {
       log.error("Failed to log RabbitMQ Event: {}", MSG, e);
     }
