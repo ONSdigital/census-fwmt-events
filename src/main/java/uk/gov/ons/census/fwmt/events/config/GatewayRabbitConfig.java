@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
@@ -33,12 +36,13 @@ public class GatewayRabbitConfig {
   }
 
   @Bean(name = "gatewayConnectionFactory")
+  @Primary
   public CachingConnectionFactory gatewayConnectionFactory(
       @Value("${app.rabbitmq.gw.host}") String host,
       @Value("${app.rabbitmq.gw.port}") int port,
       @Value("${app.rabbitmq.gw.username}") String username,
       @Value("${app.rabbitmq.gw.password}") String password,
-      @Value("${app.rabbitmq.gw.virtualHost}") String virtualHost){
+      @Value("${app.rabbitmq.gw.virtualHost}") String virtualHost) {
 
     log.info("Creating gatewayConnectionFactory with host: {}, on port {}", host, port);
 
@@ -62,7 +66,8 @@ public class GatewayRabbitConfig {
   }
 
   @Bean("GW_EVENT_RT")
-  public RabbitTemplate rabbitTemplate(@Qualifier("gatewayConnectionFactory") ConnectionFactory gatewayConnectionFactory, @Qualifier("GW_EVENT_MC") MessageConverter messageConverter) {
+  public RabbitTemplate rabbitTemplate(@Qualifier("gatewayConnectionFactory") ConnectionFactory gatewayConnectionFactory,
+      @Qualifier("GW_EVENT_MC") MessageConverter messageConverter) {
     RabbitTemplate template = new RabbitTemplate(gatewayConnectionFactory);
     template.setMessageConverter(messageConverter);
     return template;
@@ -77,4 +82,22 @@ public class GatewayRabbitConfig {
     classMapper.setIdClassMapping(idClassMapping);
     return classMapper;
   }
+
+  @Bean
+  @Qualifier("GW_errorE")
+  public DirectExchange gwErrorExchange() {
+    DirectExchange directExchange = new DirectExchange("GW.Error.Exchange");
+    return directExchange;
+  }
+
+  @Bean
+  @Qualifier("GW_errorQ")
+  public Queue gwErrorQ() {
+    Queue queue = QueueBuilder.durable("GW.ErrorQ")
+        .withArgument("GW.Error.Exchange", "")
+        .withArgument("gw.receiver.error", "GW.ErrorQ")
+        .build();
+    return queue;
+  }
+
 }
