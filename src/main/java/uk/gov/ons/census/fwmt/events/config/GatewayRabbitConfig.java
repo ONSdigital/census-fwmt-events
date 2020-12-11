@@ -3,7 +3,7 @@ package uk.gov.ons.census.fwmt.events.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -28,8 +28,8 @@ public class GatewayRabbitConfig {
   public static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
 
   @Bean
-  public FanoutExchange eventExchange() {
-    return new FanoutExchange(GATEWAY_EVENTS_EXCHANGE);
+  public DirectExchange eventExchange() {
+    return new DirectExchange(GATEWAY_EVENTS_EXCHANGE);
   }
 
   @Bean(name = "gatewayConnectionFactory")

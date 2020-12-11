@@ -1,7 +1,7 @@
 package uk.gov.ons.census.fwmt.events.producer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,7 +30,7 @@ public class RabbitMQGatewayEventProducer implements GatewayEventProducer {
 
   @Qualifier("eventExchange")
   @Autowired
-  private FanoutExchange eventExchange;
+  private DirectExchange eventExchange;
 
   private static final String MSG = "{Could not parse event.}";
 
