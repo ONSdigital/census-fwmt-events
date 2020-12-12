@@ -1,49 +1,57 @@
 package uk.gov.ons.census.fwmt.events.producer;
 
-import org.springframework.amqp.core.FanoutExchange;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-
-import com.godaddy.logging.Logger;
-import com.godaddy.logging.LoggerFactory;
-
-import uk.gov.ons.census.fwmt.events.config.GatewayEventQueueConfig;
+import uk.gov.ons.census.fwmt.events.config.GatewayRabbitConfig;
 import uk.gov.ons.census.fwmt.events.data.GatewayErrorEventDTO;
 import uk.gov.ons.census.fwmt.events.data.GatewayEventDTO;
 
+/**
+ * This producer is only really used for managing our acceptance testing
+ */
+@Slf4j
 @Component
-class RabbitMQGatewayEventProducer implements GatewayEventProducer {
+public class RabbitMQGatewayEventProducer implements GatewayEventProducer {
+  @Value("${app.rabbitmq.gw.exchanges.error}")
+  private String errorExchange;
 
-  private static final Logger log = LoggerFactory.getLogger(RabbitMQGatewayEventProducer.class);
+  @Value("${app.rabbitmq.gw.queues.error}")
+  private String errorQueue;
 
-  @Autowired
   @Qualifier("GW_EVENT_RT")
+  @Autowired
   private RabbitTemplate rabbitTemplate;
 
-  @Autowired
   @Qualifier("eventExchange")
-  private FanoutExchange eventExchange;
+  @Autowired
+  private DirectExchange eventExchange;
+
+  private static final String MSG = "{Could not parse event.}";
 
   @Retryable
   public void sendEvent(GatewayEventDTO event) {
-    String msg = "{Could not parse event.}";
     try {
-      rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayEventQueueConfig.GATEWAY_EVENTS_ROUTING_KEY, event);
+      log.info("Sending event to default exchange : {} with queue name {}", eventExchange.getName(), GatewayRabbitConfig.GATEWAY_EVENTS_ROUTING_KEY);
+
+      rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayRabbitConfig.GATEWAY_EVENTS_ROUTING_KEY, event);
     } catch (Exception e) {
-      log.error("Failed to log RabbitMQ Event: {}", msg, e);
+      log.error("Failed to log RabbitMQ Event: {}", MSG, e);
     }
   }
 
   @Override
   public void sendErrorEvent(GatewayErrorEventDTO errorEvent) {
-    String msg = "{Could not parse event.}";
     try {
-      rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayEventQueueConfig.GATEWAY_EVENTS_ROUTING_KEY, errorEvent);
+      log.info("Sending error to the following exchange : {} with queue name {}", errorExchange, errorQueue);
+      rabbitTemplate.convertAndSend(eventExchange.getName(), GatewayRabbitConfig.GATEWAY_EVENTS_ROUTING_KEY, errorEvent);
     } catch (Exception e) {
-      log.error("Failed to log RabbitMQ Event: {}", msg, e);
+      log.error("Failed to log RabbitMQ Event: {}", MSG, e);
     }
   }
 }
