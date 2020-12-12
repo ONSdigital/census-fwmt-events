@@ -3,11 +3,14 @@ package uk.gov.ons.census.fwmt.events.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -56,6 +59,13 @@ public class GatewayRabbitConfig {
     return connectionFactory;
   }
 
+  
+//  @Bean
+//  public AmqpAdmin amqpAdmin(@Qualifier("gatewayConnectionFactory") ConnectionFactory gatewayConnectionFactory) {
+//    return new RabbitAdmin(gatewayConnectionFactory);
+//  }
+
+  
   @Bean("GW_EVENT_MC")
   public MessageConverter jsonMessageConverter(@Qualifier("GW_EVENT_CM") DefaultClassMapper classMapper) {
     final ObjectMapper objectMapper = new ObjectMapper();
@@ -83,21 +93,5 @@ public class GatewayRabbitConfig {
     return classMapper;
   }
 
-  @Bean
-  @Qualifier("GW_errorE")
-  public DirectExchange gwErrorExchange() {
-    DirectExchange directExchange = new DirectExchange("GW.Error.Exchange");
-    return directExchange;
-  }
-
-  @Bean
-  @Qualifier("GW_errorQ")
-  public Queue gwErrorQ() {
-    Queue queue = QueueBuilder.durable("GW.ErrorQ")
-        .withArgument("GW.Error.Exchange", "")
-        .withArgument("gw.receiver.error", "GW.ErrorQ")
-        .build();
-    return queue;
-  }
 
 }
