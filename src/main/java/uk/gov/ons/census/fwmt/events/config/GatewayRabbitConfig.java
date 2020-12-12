@@ -3,11 +3,8 @@ package uk.gov.ons.census.fwmt.events.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -59,11 +56,12 @@ public class GatewayRabbitConfig {
     return connectionFactory;
   }
 
-  
-//  @Bean
-//  public AmqpAdmin amqpAdmin(@Qualifier("gatewayConnectionFactory") ConnectionFactory gatewayConnectionFactory) {
-//    return new RabbitAdmin(gatewayConnectionFactory);
-//  }
+
+  @Bean("gatewayAmqpAdmin")
+  @Primary
+  public AmqpAdmin gatewayAmqpAdmin(@Qualifier("gatewayConnectionFactory") ConnectionFactory gatewayConnectionFactory) {
+    return new RabbitAdmin(gatewayConnectionFactory);
+  }
 
   
   @Bean("GW_EVENT_MC")
