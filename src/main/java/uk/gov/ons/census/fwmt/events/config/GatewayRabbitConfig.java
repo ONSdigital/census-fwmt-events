@@ -26,8 +26,7 @@ import java.util.Map;
 @Configuration
 public class GatewayRabbitConfig {
 
-  public static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
-  public static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
+
 
 
 
