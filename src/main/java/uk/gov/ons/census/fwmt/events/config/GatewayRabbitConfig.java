@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -30,10 +29,7 @@ public class GatewayRabbitConfig {
   public static final String GATEWAY_EVENTS_ROUTING_KEY = "Gateway.Event";
   public static final String GATEWAY_EVENTS_EXCHANGE = "Gateway.Events.Exchange";
 
-  @Bean
-  public DirectExchange eventExchange() {
-    return new DirectExchange(GATEWAY_EVENTS_EXCHANGE);
-  }
+
 
   @Bean(name = "gatewayConnectionFactory")
   @Primary
