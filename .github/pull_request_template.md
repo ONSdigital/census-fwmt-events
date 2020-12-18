@@ -1,31 +1,26 @@
 # Issue Summary
-- link to jira ticket/feature?
+- Describe the issue -  brief summary 
+- Link to issue in Jira 
 
 # Proposed Changes
-- Describe what changes were made 
-
-
-# Dependencies 
-This library has dependencies, please confirm that they are not broken.
-Check to confirm that they still work.
-
-- [ ] JobService
-
-// What else goes in here????
+- Changes made to the code - brief summary 
 
 # Checklist
 - [ ] Tests
-- [ ] Sensitive Data not being logged
+- [x] Sensitive Data not being logged
 - [ ] Documentation Updated ( where required)
+- [ ] Have you checked dependencies?
 
 # How it was tested
-- [X] Not tested
 - [ ] Unit tested
 - [ ] Ran the acceptance tests
 - [ ] Manually Tested
+- [X] Not tested - Don't merge.
 
 # Additional Info
-- How to demonstrate functionality
-- why it's not been tested?  
+- How to demonstrate functionality  
 
 # Screenshots
+- Screen shot of Passed Unit/Acceptance Test
+
+
