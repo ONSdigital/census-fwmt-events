@@ -60,11 +60,7 @@ public class GatewayEventMonitor {
   }
 
   public void enableEventMonitor() throws IOException, TimeoutException {
-    enableEventMonitor("localhost", "guest", "guest");
-  }
-
-  public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword) throws IOException, TimeoutException {
-    enableEventMonitor(rabbitLocation, rabbitUsername, rabbitPassword, null);
+    enableEventMonitor("localhost", "guest", "guest", null);
   }
 
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port) throws IOException, TimeoutException {
@@ -72,7 +68,7 @@ public class GatewayEventMonitor {
   }
 
   public void enableEventMonitor(String rabbitLocation, String rabbitUsername, String rabbitPassword, Integer port, List<String> eventsToListen)
-      throws IOException, TimeoutException {
+          throws IOException, TimeoutException {
     gatewayEventMap = new ConcurrentHashMap<>();
     gatewayErrorEventMap = new ConcurrentHashMap<>();
     eventToWatch.clear();
@@ -95,16 +91,16 @@ public class GatewayEventMonitor {
     Consumer consumer = new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-          throws IOException {
+              throws IOException {
 
         JavaTimeModule module = new JavaTimeModule();
         LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(
-            DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSS"));
+                DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSS"));
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
         OBJECT_MAPPER = Jackson2ObjectMapperBuilder.json()
-            .modules(module)
-            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .build();
+                .modules(module)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
 
         String message = new String(body, StandardCharsets.UTF_8);
         log.debug(message);
