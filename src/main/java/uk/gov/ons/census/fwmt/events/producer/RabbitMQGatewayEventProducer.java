@@ -21,7 +21,7 @@ public class RabbitMQGatewayEventProducer implements GatewayEventProducer {
   @Value("${app.rabbitmq.gw.exchanges.error}")
   private String errorExchange;
 
-  @Value("${app.rabbitmq.gw.queues.error}")
+  @Value("${app.rabbitmq.gw.queues.errorPer}")
   private String errorQueue;
 
   @Qualifier("GW_EVENT_RT")
